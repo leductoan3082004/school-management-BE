@@ -5,11 +5,10 @@ import (
 	usermodel "SchoolManagement-BE/modules/user/model"
 	"context"
 	"github.com/lequocbinh04/go-sdk/logger"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type findUserByIdStore interface {
-	FindById(ctx context.Context, id primitive.ObjectID) (*usermodel.User, error)
+	FindById(ctx context.Context, id string) (*usermodel.User, error)
 }
 
 type FindUserByIdBiz struct {
@@ -25,8 +24,7 @@ func NewFindUserByIdBiz(store findUserByIdStore) *FindUserByIdBiz {
 }
 
 func (biz *FindUserByIdBiz) FindById(ctx context.Context, id string) (*usermodel.User, error) {
-	objectId, err := primitive.ObjectIDFromHex(id)
-	user, err := biz.store.FindById(ctx, objectId)
+	user, err := biz.store.FindById(ctx, id)
 	if err != nil {
 		if err == appCommon.ErrRecordNotFound {
 			return nil, appCommon.ErrEntityNotFound(usermodel.EntityName, err)
