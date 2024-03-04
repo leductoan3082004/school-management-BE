@@ -32,5 +32,6 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.AdminAuthorization(),
 			coursegin.Create(sc),
 		)
+		course.GET("/", coursegin.List(sc))
 	}
 }
