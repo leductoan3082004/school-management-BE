@@ -63,6 +63,11 @@ type CourseCreate struct {
 	EndTime         int64  `json:"end_time" bson:"end_time"`
 }
 
+type CourseList struct {
+	Query   *string `form:"query"`
+	EndTime *int64  `form:"end_time"`
+}
+
 type CourseDelete struct {
 	CourseId string `json:"course_id" binding:"required"`
 }

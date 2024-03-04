@@ -7,9 +7,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
-func (s *MgDBStorage) ListDataWithCondition(ctx context.Context, paging *appCommon.Paging) ([]coursemodel.Course, error) {
+func (s *MgDBStorage) ListDataWithCondition(ctx context.Context, filter *coursemodel.CourseList, paging *appCommon.Paging) ([]coursemodel.Course, error) {
 	collection := s.db.Database(appCommon.MainDBName).Collection(coursemodel.Course{}.TableName())
 
 	opts := options.Find()
@@ -32,6 +33,18 @@ func (s *MgDBStorage) ListDataWithCondition(ctx context.Context, paging *appComm
 	} else {
 		// Skip the number of documents according to the current page number
 		opts.SetSkip(int64((paging.Page - 1) * paging.Limit))
+	}
+
+	if filter.Query != nil {
+		condition["$text"] = bson.M{
+			"$search": *filter.Query,
+		}
+	}
+
+	if filter.EndTime != nil {
+		condition["end_time"] = bson.M{
+			"$gte": time.Unix(*filter.EndTime, 0),
+		}
 	}
 
 	opts.SetLimit(int64(paging.Limit)).SetSort(bson.D{{"_id", -1}})

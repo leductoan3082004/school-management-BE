@@ -8,7 +8,7 @@ import (
 )
 
 type courseListStore interface {
-	ListDataWithCondition(ctx context.Context, paging *appCommon.Paging) ([]coursemodel.Course, error)
+	ListDataWithCondition(ctx context.Context, filter *coursemodel.CourseList, paging *appCommon.Paging) ([]coursemodel.Course, error)
 }
 
 type courseListBiz struct {
@@ -23,9 +23,9 @@ func NewCourseListBiz(store courseListStore) *courseListBiz {
 	}
 }
 
-func (biz *courseListBiz) ListDataWithCondition(ctx context.Context, paging *appCommon.Paging) ([]coursemodel.Course, error) {
+func (biz *courseListBiz) ListDataWithCondition(ctx context.Context, filter *coursemodel.CourseList, paging *appCommon.Paging) ([]coursemodel.Course, error) {
 	paging.Fulfill()
-	res, err := biz.store.ListDataWithCondition(ctx, paging)
+	res, err := biz.store.ListDataWithCondition(ctx, filter, paging)
 	if err != nil {
 		biz.logger.WithSrc().Error(err)
 		return []coursemodel.Course{}, appCommon.ErrCannotListEntity(coursemodel.EntityName, err)
