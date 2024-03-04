@@ -15,9 +15,10 @@ type CourseRatio struct {
 	FinalRatio      int `json:"final_ratio" bson:"final_ratio"`
 }
 type CourseSpec struct {
-	Limit      int    `json:"limit" bson:"limit"`
-	CourseName string `json:"course_name" bson:"course_name"`
-	Credit     int    `json:"credit" bson:"credit"`
+	Limit       int    `json:"limit" bson:"limit"`
+	CourseName  string `json:"course_name" bson:"course_name"`
+	Credit      int    `json:"credit" bson:"credit"`
+	Description string `json:"description" bson:"description"`
 }
 type Course struct {
 	appCommon.MgDBModel `json:",inline" bson:",inline"`
@@ -38,6 +39,7 @@ type CourseUpdate struct {
 	Limit           *uint   `json:"limit"`
 	CourseName      *string `json:"course_name"`
 	Credit          *int    `json:"credit"`
+	Description     *string `json:"description"`
 }
 type CourseCreate struct {
 	AttendanceRatio uint   `json:"attendance_ratio"`
@@ -47,6 +49,7 @@ type CourseCreate struct {
 	Limit           uint   `json:"limit"`
 	CourseName      string `json:"course_name" binding:"required"`
 	Credit          int    `json:"credit"`
+	Description     string `json:"description"`
 }
 
 type CourseDelete struct {

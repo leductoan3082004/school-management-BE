@@ -44,6 +44,9 @@ func (s *MgDBStorage) Update(ctx context.Context, updateData *coursemodel.Course
 	if updateData.Credit != nil {
 		data["credit"] = *updateData.Credit
 	}
+	if updateData.Description != nil {
+		data["description"] = *updateData.Description
+	}
 	data["updated_at"] = time.Now()
 
 	_, err = db.UpdateOne(ctx, conditions, bson.M{

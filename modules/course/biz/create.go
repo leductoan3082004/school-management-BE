@@ -29,9 +29,10 @@ func (biz *courseCreateBiz) CreateCourse(ctx context.Context, data *coursemodel.
 	}
 	createData := &coursemodel.Course{
 		CourseSpec: coursemodel.CourseSpec{
-			Limit:      int(data.Limit),
-			CourseName: data.CourseName,
-			Credit:     data.Credit,
+			Limit:       int(data.Limit),
+			CourseName:  data.CourseName,
+			Credit:      data.Credit,
+			Description: data.Description,
 		},
 		CourseRatio: coursemodel.CourseRatio{
 			AttendanceRatio: int(data.AttendanceRatio),
