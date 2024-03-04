@@ -5,6 +5,7 @@ import (
 	coursemodel "SchoolManagement-BE/modules/course/model"
 	"context"
 	"github.com/lequocbinh04/go-sdk/logger"
+	"time"
 )
 
 type courseUpdateStore interface {
@@ -46,6 +47,13 @@ func (biz *courseUpdateBiz) UpdateCourse(ctx context.Context, data *coursemodel.
 	}
 	if data.AttendanceRatio != nil {
 		course.AttendanceRatio = int(*data.AttendanceRatio)
+	}
+
+	if data.StartTime != nil {
+		course.StartTime = time.Unix(*data.StartTime, 0)
+	}
+	if data.EndTime != nil {
+		course.EndTime = time.Unix(*data.EndTime, 0)
 	}
 
 	if err := course.Validate(); err != nil {

@@ -5,6 +5,7 @@ import (
 	coursemodel "SchoolManagement-BE/modules/course/model"
 	"context"
 	"github.com/lequocbinh04/go-sdk/logger"
+	"time"
 )
 
 type courseCreateStore interface {
@@ -39,6 +40,10 @@ func (biz *courseCreateBiz) CreateCourse(ctx context.Context, data *coursemodel.
 			LabRatio:        int(data.LabRatio),
 			MidtermRatio:    int(data.MidtermRatio),
 			FinalRatio:      int(data.FinalRatio),
+		},
+		CourseRegisterTimeline: coursemodel.CourseRegisterTimeline{
+			StartTime: time.Unix(data.StartTime, 0),
+			EndTime:   time.Unix(data.EndTime, 0),
 		},
 	}
 

@@ -47,6 +47,14 @@ func (s *MgDBStorage) Update(ctx context.Context, updateData *coursemodel.Course
 	if updateData.Description != nil {
 		data["description"] = *updateData.Description
 	}
+
+	if updateData.StartTime != nil {
+		data["start_time"] = time.Unix(*updateData.StartTime, 0)
+	}
+	if updateData.EndTime != nil {
+		data["end_time"] = time.Unix(*updateData.EndTime, 0)
+	}
+
 	data["updated_at"] = time.Now()
 
 	_, err = db.UpdateOne(ctx, conditions, bson.M{

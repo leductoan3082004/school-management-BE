@@ -4,6 +4,7 @@ import (
 	"SchoolManagement-BE/appCommon"
 	"errors"
 	"net/http"
+	"time"
 )
 
 const EntityName = "Course"
@@ -20,10 +21,16 @@ type CourseSpec struct {
 	Credit      int    `json:"credit" bson:"credit"`
 	Description string `json:"description" bson:"description"`
 }
+type CourseRegisterTimeline struct {
+	StartTime time.Time `json:"start_time" bson:"start_time"`
+	EndTime   time.Time `json:"end_time" bson:"end_time"`
+}
+
 type Course struct {
-	appCommon.MgDBModel `json:",inline" bson:",inline"`
-	CourseSpec          `json:",inline" bson:",inline"`
-	CourseRatio         `json:",inline" bson:",inline"`
+	appCommon.MgDBModel    `json:",inline" bson:",inline"`
+	CourseSpec             `json:",inline" bson:",inline"`
+	CourseRatio            `json:",inline" bson:",inline"`
+	CourseRegisterTimeline `json:",inline" bson:",inline"`
 }
 
 func (Course) TableName() string {
@@ -40,6 +47,8 @@ type CourseUpdate struct {
 	CourseName      *string `json:"course_name"`
 	Credit          *int    `json:"credit"`
 	Description     *string `json:"description"`
+	StartTime       *int64  `json:"start_time" bson:"start_time"`
+	EndTime         *int64  `json:"end_time" bson:"end_time"`
 }
 type CourseCreate struct {
 	AttendanceRatio uint   `json:"attendance_ratio"`
@@ -50,6 +59,8 @@ type CourseCreate struct {
 	CourseName      string `json:"course_name" binding:"required"`
 	Credit          int    `json:"credit"`
 	Description     string `json:"description"`
+	StartTime       int64  `json:"start_time" bson:"start_time"`
+	EndTime         int64  `json:"end_time" bson:"end_time"`
 }
 
 type CourseDelete struct {
@@ -60,11 +71,17 @@ func (s *CourseCreate) Validate() error {
 	if s.FinalRatio+s.AttendanceRatio+s.MidtermRatio+s.LabRatio != 100 {
 		return ErrInvalidRatio
 	}
+	if s.StartTime > s.EndTime {
+		return ErrInvalidTimeframe
+	}
 	return nil
 }
 func (s *Course) Validate() error {
 	if s.FinalRatio+s.AttendanceRatio+s.MidtermRatio+s.LabRatio != 100 {
 		return ErrInvalidRatio
+	}
+	if s.StartTime.After(s.EndTime) {
+		return ErrInvalidTimeframe
 	}
 	return nil
 }
@@ -75,5 +92,11 @@ var (
 		errors.New("sum of ratio is not 100%"),
 		"sum of ratio is not 100%",
 		"ErrInvalidRatio",
+	)
+	ErrInvalidTimeframe = appCommon.NewCustomError(
+		http.StatusBadRequest,
+		errors.New("time is not valid"),
+		"time is not valid",
+		"ErrInvalidTimeframe",
 	)
 )
