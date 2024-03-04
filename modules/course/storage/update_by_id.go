@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-func (s *MgDBStorage) Update(ctx context.Context, id string, updateData *coursemodel.CourseUpdate) error {
+func (s *MgDBStorage) Update(ctx context.Context, updateData *coursemodel.CourseUpdate) error {
 	db := s.db.Database(appCommon.MainDBName).Collection(coursemodel.Course{}.TableName())
-	objId, err := primitive.ObjectIDFromHex(id)
+	objId, err := primitive.ObjectIDFromHex(updateData.CourseId)
 
 	if err != nil {
 		return appCommon.ErrInvalidRequest(err)

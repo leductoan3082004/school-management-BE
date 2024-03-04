@@ -38,6 +38,13 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.AdminAuthorization(),
 			coursegin.Delete(sc),
 		)
+		course.PUT(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			coursegin.Update(sc),
+		)
+
 		course.GET("/", coursegin.List(sc))
 	}
 }

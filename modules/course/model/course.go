@@ -30,6 +30,7 @@ func (Course) TableName() string {
 }
 
 type CourseUpdate struct {
+	CourseId        string  `json:"course_id" binding:"required"`
 	AttendanceRatio *uint   `json:"attendance_ratio"`
 	LabRatio        *uint   `json:"lab_ratio"`
 	MidtermRatio    *uint   `json:"midterm_ratio"`
@@ -53,6 +54,12 @@ type CourseDelete struct {
 }
 
 func (s *CourseCreate) Validate() error {
+	if s.FinalRatio+s.AttendanceRatio+s.MidtermRatio+s.LabRatio != 100 {
+		return ErrInvalidRatio
+	}
+	return nil
+}
+func (s *Course) Validate() error {
 	if s.FinalRatio+s.AttendanceRatio+s.MidtermRatio+s.LabRatio != 100 {
 		return ErrInvalidRatio
 	}
