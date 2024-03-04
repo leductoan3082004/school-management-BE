@@ -1,4 +1,4 @@
-package userstorage
+package coursestorage
 
 import "go.mongodb.org/mongo-driver/mongo"
 

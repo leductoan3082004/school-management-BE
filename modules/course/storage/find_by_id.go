@@ -1,4 +1,4 @@
-package userstorage
+package coursestorage
 
 import (
 	"SchoolManagement-BE/appCommon"
