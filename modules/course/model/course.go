@@ -48,6 +48,10 @@ type CourseCreate struct {
 	Credit          int    `json:"credit"`
 }
 
+type CourseDelete struct {
+	CourseId string `json:"course_id" binding:"required"`
+}
+
 func (s *CourseCreate) Validate() error {
 	if s.FinalRatio+s.AttendanceRatio+s.MidtermRatio+s.LabRatio != 100 {
 		return ErrInvalidRatio
