@@ -50,6 +50,11 @@ type UserLogin struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type UserChangePassword struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required"`
+}
+
 var (
 	ErrUsernameExisted = appCommon.NewCustomError(
 		http.StatusBadRequest,
