@@ -20,6 +20,7 @@ type CourseSpec struct {
 	CourseName  string `json:"course_name" bson:"course_name"`
 	Credit      int    `json:"credit" bson:"credit"`
 	Description string `json:"description" bson:"description"`
+	Period      uint   `json:"period" bson:"period"`
 }
 type CourseRegisterTimeline struct {
 	StartTime time.Time `json:"start_time" bson:"start_time"`
@@ -47,8 +48,9 @@ type CourseUpdate struct {
 	CourseName      *string `json:"course_name"`
 	Credit          *int    `json:"credit"`
 	Description     *string `json:"description"`
-	StartTime       *int64  `json:"start_time" bson:"start_time"`
-	EndTime         *int64  `json:"end_time" bson:"end_time"`
+	StartTime       *int64  `json:"start_time"`
+	EndTime         *int64  `json:"end_time"`
+	Period          *uint   `json:"period"`
 }
 type CourseCreate struct {
 	AttendanceRatio uint   `json:"attendance_ratio"`
@@ -61,6 +63,7 @@ type CourseCreate struct {
 	Description     string `json:"description"`
 	StartTime       int64  `json:"start_time" bson:"start_time"`
 	EndTime         int64  `json:"end_time" bson:"end_time"`
+	Period          uint   `json:"period"`
 }
 
 type CourseList struct {
