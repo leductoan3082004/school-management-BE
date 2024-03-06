@@ -4,12 +4,11 @@ import (
 	"SchoolManagement-BE/appCommon"
 	classroommodel "SchoolManagement-BE/modules/classroom/model"
 	"context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *MgDBStorage) GetTeacherTimeTable(ctx context.Context, teacherID string) ([]classroommodel.TimeTable, error) {
+func (s *MgDBStorage) GetTeacherTimeTable(ctx context.Context, teacherID string) (classroommodel.TimeTables, error) {
 
 	objId, err := primitive.ObjectIDFromHex(teacherID)
 	if err != nil {
@@ -30,7 +29,6 @@ func (s *MgDBStorage) GetTeacherTimeTable(ctx context.Context, teacherID string)
 
 	var timeTable []classroommodel.TimeTable
 
-	fmt.Println(result)
 	for i := range result {
 		timeTable = append(timeTable, result[i].TimeTable...)
 	}

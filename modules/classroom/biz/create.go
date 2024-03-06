@@ -14,7 +14,7 @@ import (
 type classroomCreateStore interface {
 	Create(ctx context.Context, data *classroommodel.Classroom) error
 	Count(ctx context.Context, courseID string) (int64, error)
-	GetTeacherTimeTable(ctx context.Context, teacherID string) ([]classroommodel.TimeTable, error)
+	GetTeacherTimeTable(ctx context.Context, teacherID string) (classroommodel.TimeTables, error)
 }
 type courseCheckingStore interface {
 	FindById(ctx context.Context, id string) (*coursemodel.Course, error)
@@ -126,22 +126,8 @@ func (biz *createClassroomBiz) CreateClassroom(
 		return nil, appCommon.ErrCannotGetEntity(classroommodel.EntityName, err)
 	}
 
-	for _, t := range teacherTimeTable {
-		for _, c := range timeTable {
-			st := t.LessonStart
-			if st.Before(c.LessonStart) {
-				st = c.LessonStart
-			}
-
-			et := t.LessonEnd
-			if et.After(c.LessonEnd) {
-				et = c.LessonEnd
-			}
-
-			if st.Before(et) || st.Equal(et) {
-				return nil, classroommodel.ErrTeacherTimeTableOverlap
-			}
-		}
+	if createData.TimeTable.CheckIntersect(&teacherTimeTable) {
+		return nil, classroommodel.ErrTeacherTimeTableOverlap
 	}
 
 	if err := biz.classStore.Create(ctx, createData); err != nil {

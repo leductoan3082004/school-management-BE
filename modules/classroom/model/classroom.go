@@ -16,14 +16,36 @@ type TimeTable struct {
 	LessonEnd   time.Time          `json:"lesson_end" bson:"lesson_end"`
 }
 
+type TimeTables []TimeTable
 type Classroom struct {
 	appCommon.MgDBModel `json:",inline" bson:",inline"`
 	CourseID            primitive.ObjectID `json:"course_id" bson:"course_id"`
 	TeacherID           primitive.ObjectID `json:"teacher_id" bson:"teacher_id"`
-	TimeTable           []TimeTable        `json:"time_table" bson:"time_table"`
+	TimeTable           TimeTables         `json:"time_table" bson:"time_table"`
 	Limit               int                `json:"limit" bson:"limit"`
 }
 
+func (s *TimeTables) CheckIntersect(other *TimeTables) bool {
+	for _, t := range *s {
+		for _, c := range *other {
+			st := t.LessonStart
+			if st.Before(c.LessonStart) {
+				st = c.LessonStart
+			}
+
+			et := t.LessonEnd
+			if et.After(c.LessonEnd) {
+				et = c.LessonEnd
+			}
+
+			if st.Before(et) || st.Equal(et) {
+				return true
+			}
+		}
+	}
+	return false
+
+}
 func (Classroom) TableName() string {
 	return "classroom"
 }
