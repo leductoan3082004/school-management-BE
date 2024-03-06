@@ -2,6 +2,7 @@ package handler
 
 import (
 	"SchoolManagement-BE/middleware"
+	classroomgin "SchoolManagement-BE/modules/classroom/transport/gin"
 	coursegin "SchoolManagement-BE/modules/course/transport/gin"
 	usergin "SchoolManagement-BE/modules/user/transport/gin"
 	"github.com/gin-gonic/gin"
@@ -47,5 +48,15 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		)
 
 		course.GET("/", coursegin.List(sc))
+	}
+
+	classroom := v1.Group("/classroom")
+	{
+		classroom.POST(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			classroomgin.Create(sc),
+		)
 	}
 }
