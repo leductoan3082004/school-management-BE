@@ -88,8 +88,8 @@ func (biz *createClassroomBiz) CreateClassroom(
 
 		for j := 0; j < data.Weeks; j++ {
 			if j > 0 {
-				lessonStart.Add(7 * 24 * time.Hour)
-				lessonEnd.Add(7 * 24 * time.Hour)
+				lessonStart = lessonStart.Add(7 * 24 * time.Hour)
+				lessonEnd = lessonEnd.Add(7 * 24 * time.Hour)
 			}
 			timeTable = append(timeTable, classroommodel.TimeTable{
 				ID:          primitive.NewObjectID(),
