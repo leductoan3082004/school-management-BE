@@ -107,4 +107,10 @@ var (
 		"time is not valid",
 		"ErrInvalidTimeframe",
 	)
+	ErrClassroomLimitExceed = appCommon.NewCustomError(
+		http.StatusBadRequest,
+		errors.New("classroom has reached its limit"),
+		"classroom has reached its limit",
+		"ErrClassroomLimitExceed",
+	)
 )

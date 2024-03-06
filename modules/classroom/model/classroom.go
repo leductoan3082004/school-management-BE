@@ -2,7 +2,9 @@ package classroommodel
 
 import (
 	"SchoolManagement-BE/appCommon"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"net/http"
 	"time"
 )
 
@@ -37,6 +39,18 @@ type ClassroomCreate struct {
 	} `json:"time_table" binding:"required"`
 }
 
+func (data *ClassroomCreate) Validate() error {
+	if len(data.TimeTable) == 0 {
+		return appCommon.ErrInvalidRequest(errors.New("time_table is required"))
+	}
+	for i := range data.TimeTable {
+		if data.TimeTable[i].LessonStart >= data.TimeTable[i].LessonEnd {
+			return appCommon.ErrInvalidRequest(errors.New("lesson_start must be less than lesson_end"))
+		}
+	}
+	return nil
+}
+
 type ClassroomUpdate struct {
 	ClassroomId primitive.ObjectID  `json:"classroom_id" binding:"required"`
 	TeacherID   *primitive.ObjectID `json:"teacher_id"`
@@ -47,3 +61,12 @@ type ClassroomUpdate struct {
 type ClassroomDelete struct {
 	ClassroomIds []string `json:"classroom_ids" binding:"required"`
 }
+
+var (
+	ErrTeacherTimeTableOverlap = appCommon.NewCustomError(
+		http.StatusBadRequest,
+		errors.New("sum of ratio is not 100%"),
+		"sum of ratio is not 100%",
+		"ErrTeacherTimeTableOverlap",
+	)
+)

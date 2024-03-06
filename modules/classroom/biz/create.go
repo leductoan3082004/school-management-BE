@@ -13,6 +13,8 @@ import (
 
 type classroomCreateStore interface {
 	Create(ctx context.Context, data *classroommodel.Classroom) error
+	Count(ctx context.Context, courseID string) (int64, error)
+	GetTeacherTimeTable(ctx context.Context, teacherID string) ([]classroommodel.TimeTable, error)
 }
 type courseCheckingStore interface {
 	FindById(ctx context.Context, id string) (*coursemodel.Course, error)
@@ -46,6 +48,11 @@ func (biz *createClassroomBiz) CreateClassroom(
 	ctx context.Context,
 	data *classroommodel.ClassroomCreate,
 ) (*classroommodel.Classroom, error) {
+
+	if err := data.Validate(); err != nil {
+		return nil, err
+	}
+
 	courseID, err := primitive.ObjectIDFromHex(data.CourseID)
 	if err != nil {
 		return nil, appCommon.ErrInvalidRequest(err)
@@ -55,13 +62,24 @@ func (biz *createClassroomBiz) CreateClassroom(
 		return nil, appCommon.ErrInvalidRequest(err)
 	}
 
-	_, err = biz.courseStore.FindById(ctx, data.CourseID)
+	course, err := biz.courseStore.FindById(ctx, data.CourseID)
 	if err != nil {
 		if err == appCommon.ErrRecordNotFound {
 			return nil, appCommon.ErrEntityNotFound(coursemodel.EntityName, err)
 		}
 		biz.logger.WithSrc().Errorln(err)
 		return nil, appCommon.ErrCannotGetEntity(coursemodel.EntityName, err)
+	}
+
+	count, err := biz.classStore.Count(ctx, data.CourseID)
+	if err != nil {
+		biz.logger.WithSrc().Errorln(err)
+		return nil, appCommon.ErrInternal(err)
+	}
+
+	// check class exceed limit or not
+	if count >= int64(course.Limit) {
+		return nil, coursemodel.ErrClassroomLimitExceed
 	}
 
 	_, err = biz.userStore.FindById(ctx, data.TeacherID)
@@ -82,6 +100,7 @@ func (biz *createClassroomBiz) CreateClassroom(
 
 	timeTable := make([]classroommodel.TimeTable, 0)
 
+	// duplicate
 	for i := range data.TimeTable {
 		lessonStart := time.Unix(data.TimeTable[i].LessonStart, 0)
 		lessonEnd := time.Unix(data.TimeTable[i].LessonEnd, 0)
@@ -99,6 +118,31 @@ func (biz *createClassroomBiz) CreateClassroom(
 		}
 	}
 	createData.TimeTable = timeTable
+
+	// check teacher time table overlap
+	teacherTimeTable, err := biz.classStore.GetTeacherTimeTable(ctx, data.TeacherID)
+	if err != nil {
+		biz.logger.WithSrc().Errorln(err)
+		return nil, appCommon.ErrCannotGetEntity(classroommodel.EntityName, err)
+	}
+
+	for _, t := range teacherTimeTable {
+		for _, c := range timeTable {
+			st := t.LessonStart
+			if st.Before(c.LessonStart) {
+				st = c.LessonStart
+			}
+
+			et := t.LessonEnd
+			if et.After(c.LessonEnd) {
+				et = c.LessonEnd
+			}
+
+			if st.Before(et) || st.Equal(et) {
+				return nil, classroommodel.ErrTeacherTimeTableOverlap
+			}
+		}
+	}
 
 	if err := biz.classStore.Create(ctx, createData); err != nil {
 		biz.logger.WithSrc().Errorln(err)
