@@ -22,9 +22,14 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 	v1.POST("user/login", usergin.Login(sc))
 
 	authedRoutes := v1.Group("/", middleware.RequiredAuth(sc))
-	authedRoutes.GET("/user", usergin.GetProfile(sc))
-	authedRoutes.POST("/user", middleware.AdminAuthorization(), usergin.Create(sc))
-	authedRoutes.POST("/user/change-password", usergin.ChangePassword(sc))
+
+	user := authedRoutes.Group("/user")
+	{
+		user.GET("/profile", usergin.GetProfile(sc))
+		user.POST("/", middleware.AdminAuthorization(), usergin.Create(sc))
+		user.POST("/change-password", usergin.ChangePassword(sc))
+		user.GET("/", middleware.AdminAuthorization(), usergin.ListUsers(sc))
+	}
 
 	course := v1.Group("/course")
 	{
