@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-const (
-	RoleUser = iota
-	RoleTeacher
-	RoleAdmin
-)
+//const (
+//	RoleUser = iota
+//	RoleTeacher
+//	RoleAdmin
+//)
 
 const EntityName = "user"
 
@@ -21,10 +21,10 @@ type AuthenticationUser struct {
 }
 
 type SpecUser struct {
-	Role    int    `json:"role" bson:"role"`
-	Name    string `json:"name" bson:"name"`
-	Phone   string `json:"phone" bson:"phone"`
-	Address string `json:"address" bson:"address"`
+	Role    *UserRole `json:"role" bson:"role"`
+	Name    string    `json:"name" bson:"name"`
+	Phone   string    `json:"phone" bson:"phone"`
+	Address string    `json:"address" bson:"address"`
 }
 type User struct {
 	appCommon.MgDBModel `json:",inline" bson:",inline"`
@@ -37,12 +37,12 @@ func (User) TableName() string {
 }
 
 type UserCreate struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Role     int    `json:"role"`
-	Name     string `json:"name" binding:"required"`
-	Phone    string `json:"phone" binding:"required"`
-	Address  string `json:"address" binding:"required"`
+	Username string    `json:"username" binding:"required"`
+	Password string    `json:"password" binding:"required"`
+	Role     *UserRole `json:"role"`
+	Name     string    `json:"name" binding:"required"`
+	Phone    string    `json:"phone" binding:"required"`
+	Address  string    `json:"address" binding:"required"`
 }
 
 type UserLogin struct {
