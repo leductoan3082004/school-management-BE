@@ -74,10 +74,10 @@ func (data *ClassroomCreate) Validate() error {
 }
 
 type ClassroomUpdate struct {
-	ClassroomId primitive.ObjectID  `json:"classroom_id" binding:"required"`
-	TeacherID   *primitive.ObjectID `json:"teacher_id"`
-	Limit       *int                `json:"limit"`
-	TimeIds     *[]string           `json:"time_ids"`
+	ClassroomId string    `json:"classroom_id" binding:"required"`
+	TeacherID   *string   `json:"teacher_id"`
+	Limit       *int      `json:"limit"`
+	TimeIds     *[]string `json:"time_ids"`
 }
 
 type ClassroomDelete struct {
