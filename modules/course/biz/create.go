@@ -34,6 +34,7 @@ func (biz *courseCreateBiz) CreateCourse(ctx context.Context, data *coursemodel.
 			CourseName:  data.CourseName,
 			Credit:      data.Credit,
 			Description: data.Description,
+			Period:      data.Period,
 		},
 		CourseRatio: coursemodel.CourseRatio{
 			AttendanceRatio: int(data.AttendanceRatio),

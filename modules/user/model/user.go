@@ -55,6 +55,10 @@ type UserChangePassword struct {
 	NewPassword string `json:"new_password" binding:"required"`
 }
 
+type UserList struct {
+	Role *int `form:"role"`
+}
+
 var (
 	ErrUsernameExisted = appCommon.NewCustomError(
 		http.StatusBadRequest,

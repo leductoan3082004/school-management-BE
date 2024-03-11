@@ -2,6 +2,7 @@ package handler
 
 import (
 	"SchoolManagement-BE/middleware"
+	classroomgin "SchoolManagement-BE/modules/classroom/transport/gin"
 	coursegin "SchoolManagement-BE/modules/course/transport/gin"
 	usergin "SchoolManagement-BE/modules/user/transport/gin"
 	"github.com/gin-gonic/gin"
@@ -21,9 +22,14 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 	v1.POST("user/login", usergin.Login(sc))
 
 	authedRoutes := v1.Group("/", middleware.RequiredAuth(sc))
-	authedRoutes.GET("/user", usergin.GetProfile(sc))
-	authedRoutes.POST("/user", middleware.AdminAuthorization(), usergin.Create(sc))
-	authedRoutes.POST("/user/change-password", usergin.ChangePassword(sc))
+
+	user := authedRoutes.Group("/user")
+	{
+		user.GET("/profile", usergin.GetProfile(sc))
+		user.POST("/", middleware.AdminAuthorization(), usergin.Create(sc))
+		user.POST("/change-password", usergin.ChangePassword(sc))
+		user.GET("/", middleware.AdminAuthorization(), usergin.ListUsers(sc))
+	}
 
 	course := v1.Group("/course")
 	{
@@ -47,5 +53,28 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		)
 
 		course.GET("/", coursegin.List(sc))
+	}
+
+	classroom := v1.Group("/classroom")
+	{
+		classroom.POST(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			classroomgin.Create(sc),
+		)
+		classroom.DELETE(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			classroomgin.Delete(sc),
+		)
+		classroom.GET("/", classroomgin.List(sc))
+		classroom.PUT(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			classroomgin.Update(sc),
+		)
 	}
 }
