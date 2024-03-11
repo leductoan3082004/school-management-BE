@@ -69,6 +69,6 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.AdminAuthorization(),
 			classroomgin.Delete(sc),
 		)
-
+		classroom.GET("/", classroomgin.List(sc))
 	}
 }

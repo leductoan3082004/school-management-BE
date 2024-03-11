@@ -84,6 +84,10 @@ type ClassroomDelete struct {
 	ClassroomIds []string `json:"classroom_ids" binding:"required"`
 }
 
+type ClassroomList struct {
+	CourseID string `form:"course_id" binding:"required"`
+}
+
 var (
 	ErrTeacherTimeTableOverlap = appCommon.NewCustomError(
 		http.StatusBadRequest,

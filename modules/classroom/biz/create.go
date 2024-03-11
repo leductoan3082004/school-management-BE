@@ -119,7 +119,7 @@ func (biz *createClassroomBiz) CreateClassroom(
 	}
 	createData.TimeTable = timeTable
 
-	// check teacher time table overlap
+	// check teacher timetable overlap
 	teacherTimeTable, err := biz.classStore.GetTeacherTimeTable(ctx, data.TeacherID)
 	if err != nil {
 		biz.logger.WithSrc().Errorln(err)
