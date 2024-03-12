@@ -15,18 +15,26 @@ type listLessonStore interface {
 type classLessonListStore interface {
 	FindById(ctx context.Context, id string) (*classroommodel.Classroom, error)
 }
-
+type classMemberListStore interface {
+	FindByUserId(ctx context.Context, classID string, userID string) (bool, error)
+}
 type listLessonBiz struct {
-	store      listLessonStore
-	classStore classLessonListStore
-	logger     logger.Logger
+	store            listLessonStore
+	classStore       classLessonListStore
+	classMemberStore classMemberListStore
+	logger           logger.Logger
 }
 
-func NewListLessonBiz(store listLessonStore, classStore classLessonListStore) *listLessonBiz {
+func NewListLessonBiz(
+	store listLessonStore,
+	classStore classLessonListStore,
+	classMemberStore classMemberListStore,
+) *listLessonBiz {
 	return &listLessonBiz{
-		store:      store,
-		classStore: classStore,
-		logger:     logger.GetCurrent().GetLogger("ListLessonBiz"),
+		store:            store,
+		classStore:       classStore,
+		classMemberStore: classMemberStore,
+		logger:           logger.GetCurrent().GetLogger("ListLessonBiz"),
 	}
 }
 
@@ -37,16 +45,13 @@ func (biz *listLessonBiz) ListLesson(
 	paging *appCommon.Paging,
 ) ([]lessonmodel.Lesson, error) {
 	if user.Role != usermodel.RoleAdmin {
-		return []lessonmodel.Lesson{}, appCommon.ErrNoPermission(nil)
-	}
-	if user.Role == usermodel.RoleTeacher {
-		class, err := biz.classStore.FindById(ctx, data.ClassID)
+		_, err := biz.classMemberStore.FindByUserId(ctx, data.ClassID, user.Id.Hex())
 		if err != nil {
+			if err == appCommon.ErrRecordNotFound {
+				return nil, appCommon.ErrNoPermission(nil)
+			}
 			biz.logger.WithSrc().Errorln(err)
-			return nil, appCommon.ErrCannotGetEntity(classroommodel.EntityName, err)
-		}
-		if class.TeacherID != user.Id {
-			return nil, appCommon.ErrNoPermission(nil)
+			return nil, appCommon.ErrCannotGetEntity(lessonmodel.EntityName, err)
 		}
 	}
 

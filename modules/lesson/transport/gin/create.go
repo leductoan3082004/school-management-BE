@@ -3,7 +3,6 @@ package lessongin
 import (
 	"SchoolManagement-BE/appCommon"
 	classroomstorage "SchoolManagement-BE/modules/classroom/storage"
-	coursestorage "SchoolManagement-BE/modules/course/storage"
 	lessonbiz "SchoolManagement-BE/modules/lesson/biz"
 	lessonmodel "SchoolManagement-BE/modules/lesson/model"
 	lessonstorage "SchoolManagement-BE/modules/lesson/storage"
@@ -22,10 +21,9 @@ func Create(sc goservice.ServiceContext) gin.HandlerFunc {
 		db := sc.MustGet(appCommon.DBMain).(*mongo.Client)
 
 		store := lessonstorage.NewMgDBStorage(db)
-		courseStore := coursestorage.NewMgDBStorage(db)
 		classStore := classroomstorage.NewMgDBStorage(db)
 
-		biz := lessonbiz.NewCreateLessonBiz(store, courseStore, classStore)
+		biz := lessonbiz.NewCreateLessonBiz(store, classStore)
 		if err := biz.CreateLesson(c.Request.Context(), &data); err != nil {
 			panic(err)
 		}

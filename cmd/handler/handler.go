@@ -32,23 +32,20 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		user.GET("/", middleware.AdminAuthorization(), usergin.ListUsers(sc))
 	}
 
-	course := v1.Group("/course")
+	course := authedRoutes.Group("/course")
 	{
 		course.POST(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			coursegin.Create(sc),
 		)
 		course.DELETE(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			coursegin.Delete(sc),
 		)
 		course.PUT(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			coursegin.Update(sc),
 		)
@@ -56,48 +53,43 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		course.GET("/", coursegin.List(sc))
 	}
 
-	classroom := v1.Group("/classroom")
+	classroom := authedRoutes.Group("/classroom")
 	{
 		classroom.POST(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			classroomgin.Create(sc),
 		)
 		classroom.DELETE(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			classroomgin.Delete(sc),
 		)
 		classroom.GET("/", classroomgin.List(sc))
 		classroom.PUT(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			classroomgin.Update(sc),
 		)
 	}
 
-	lesson := v1.Group("/lesson")
+	lesson := authedRoutes.Group("/lesson")
 	{
 		lesson.POST(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			lessongin.Create(sc),
 		)
 		lesson.PUT(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			lessongin.Update(sc),
 		)
 		lesson.DELETE(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			lessongin.Delete(sc),
 		)
+		lesson.GET("/", lessongin.List(sc))
 	}
 }
