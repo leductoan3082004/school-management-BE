@@ -93,5 +93,11 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.AdminAuthorization(),
 			lessongin.Update(sc),
 		)
+		lesson.DELETE(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			lessongin.Delete(sc),
+		)
 	}
 }
