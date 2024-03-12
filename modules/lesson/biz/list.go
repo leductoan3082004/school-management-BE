@@ -16,7 +16,7 @@ type classLessonListStore interface {
 	FindById(ctx context.Context, id string) (*classroommodel.Classroom, error)
 }
 type classMemberListStore interface {
-	FindByUserId(ctx context.Context, classID string, userID string) (bool, error)
+	FindByUserId(ctx context.Context, classID string, userID string) error
 }
 type listLessonBiz struct {
 	store            listLessonStore
@@ -45,7 +45,7 @@ func (biz *listLessonBiz) ListLesson(
 	paging *appCommon.Paging,
 ) ([]lessonmodel.Lesson, error) {
 	if user.Role != usermodel.RoleAdmin {
-		_, err := biz.classMemberStore.FindByUserId(ctx, data.ClassID, user.Id.Hex())
+		err := biz.classMemberStore.FindByUserId(ctx, data.ClassID, user.Id.Hex())
 		if err != nil {
 			if err == appCommon.ErrRecordNotFound {
 				return nil, appCommon.ErrNoPermission(nil)
