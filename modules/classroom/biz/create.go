@@ -76,6 +76,7 @@ func (biz *createClassroomBiz) CreateClassroom(
 		CourseID:  courseID,
 		TimeTable: nil,
 		Limit:     data.Limit,
+		Members:   []classroommodel.Member{},
 	}
 
 	timeTable := make([]classroommodel.TimeTable, 0)

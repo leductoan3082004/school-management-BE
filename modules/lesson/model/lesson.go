@@ -33,7 +33,7 @@ var AllowedExt = []string{
 }
 
 type Material struct {
-	LessonID primitive.ObjectID `json:"lesson_id"`
+	LessonID primitive.ObjectID `json:"-" bson:"-"`
 	Key      string             `json:"key" bson:"key"`
 	Name     string             `json:"name" bson:"name"`
 }
@@ -71,8 +71,8 @@ type LessonDelete struct {
 }
 
 type LessonList struct {
-	ClassID string  `json:"class_id"`
-	Query   *string `json:"query"`
+	ClassID string  `json:"class_id" form:"class_id"`
+	Query   *string `json:"query" form:"query"`
 }
 
 var (

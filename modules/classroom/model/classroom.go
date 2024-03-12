@@ -10,6 +10,17 @@ import (
 
 const EntityName = "Classroom"
 
+type MemberScore struct {
+	Attendance uint `json:"attendance" bson:"attendance" `
+	Lab        uint `json:"lab" bson:"lab" `
+	Midterm    uint `json:"midterm" bson:"midterm"`
+	Final      uint `json:"final" bson:"final"`
+}
+type Member struct {
+	UserID      primitive.ObjectID `json:"user_id" bson:"user_id"`
+	Role        int                `json:"role" bson:"role"`
+	MemberScore `bson:",inline"`
+}
 type TimeTable struct {
 	ID          primitive.ObjectID `json:"id" bson:"id"`
 	LessonStart time.Time          `json:"lesson_start" bson:"lesson_start"`
@@ -17,11 +28,13 @@ type TimeTable struct {
 }
 
 type TimeTables []TimeTable
+
 type Classroom struct {
 	appCommon.MgDBModel `json:",inline" bson:",inline"`
 	CourseID            primitive.ObjectID `json:"course_id" bson:"course_id"`
 	TimeTable           TimeTables         `json:"time_table" bson:"time_table"`
 	Limit               int                `json:"limit" bson:"limit"`
+	Members             []Member           `json:"members" bson:"members"`
 }
 
 func (s *TimeTables) CheckIntersect(other *TimeTables) bool {
