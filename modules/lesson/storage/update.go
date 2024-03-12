@@ -23,21 +23,6 @@ func (s *MgDBStorage) Update(ctx context.Context, data *lessonmodel.LessonUpdate
 		"_id": lessonID,
 	}
 
-	if data.ClassID != nil {
-		classID, err := primitive.ObjectIDFromHex(*data.ClassID)
-		if err != nil {
-			return appCommon.ErrInvalidRequest(err)
-		}
-		setCondition["class_id"] = classID
-	}
-	if data.CourseID != nil {
-		courseID, err := primitive.ObjectIDFromHex(*data.CourseID)
-		if err != nil {
-			return appCommon.ErrInvalidRequest(err)
-		}
-		setCondition["course_id"] = courseID
-	}
-
 	if data.Name != nil {
 		setCondition["name"] = *data.Name
 	}
