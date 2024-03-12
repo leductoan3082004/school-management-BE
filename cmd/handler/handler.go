@@ -77,4 +77,9 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			classroomgin.Update(sc),
 		)
 	}
+
+	material := v1.Group("/material")
+	{
+
+	}
 }
