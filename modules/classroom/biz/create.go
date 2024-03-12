@@ -4,7 +4,6 @@ import (
 	"SchoolManagement-BE/appCommon"
 	classroommodel "SchoolManagement-BE/modules/classroom/model"
 	coursemodel "SchoolManagement-BE/modules/course/model"
-	usermodel "SchoolManagement-BE/modules/user/model"
 	"context"
 	"github.com/lequocbinh04/go-sdk/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -20,26 +19,19 @@ type courseCheckingStore interface {
 	FindById(ctx context.Context, id string) (*coursemodel.Course, error)
 }
 
-type userCheckingStore interface {
-	FindById(ctx context.Context, id string) (*usermodel.User, error)
-}
-
 type createClassroomBiz struct {
 	classStore  classroomCreateStore
 	courseStore courseCheckingStore
-	userStore   userCheckingStore
 	logger      logger.Logger
 }
 
 func NewCreateClassroomBiz(
 	classStore classroomCreateStore,
 	courseStore courseCheckingStore,
-	userStore userCheckingStore,
 ) *createClassroomBiz {
 	return &createClassroomBiz{
 		classStore:  classStore,
 		courseStore: courseStore,
-		userStore:   userStore,
 		logger:      logger.GetCurrent().GetLogger("ClassroomCreateBiz"),
 	}
 }
@@ -57,7 +49,6 @@ func (biz *createClassroomBiz) CreateClassroom(
 	if err != nil {
 		return nil, appCommon.ErrInvalidRequest(err)
 	}
-	teacherID, err := primitive.ObjectIDFromHex(data.TeacherID)
 	if err != nil {
 		return nil, appCommon.ErrInvalidRequest(err)
 	}
@@ -82,18 +73,8 @@ func (biz *createClassroomBiz) CreateClassroom(
 		return nil, coursemodel.ErrClassroomLimitExceed
 	}
 
-	_, err = biz.userStore.FindById(ctx, data.TeacherID)
-	if err != nil {
-		if err == appCommon.ErrRecordNotFound {
-			return nil, appCommon.ErrEntityNotFound(usermodel.EntityName, err)
-		}
-		biz.logger.WithSrc().Errorln(err)
-		return nil, appCommon.ErrCannotGetEntity(usermodel.EntityName, err)
-	}
-
 	createData := &classroommodel.Classroom{
 		CourseID:  courseID,
-		TeacherID: teacherID,
 		TimeTable: nil,
 		Limit:     data.Limit,
 	}
@@ -118,17 +99,6 @@ func (biz *createClassroomBiz) CreateClassroom(
 		}
 	}
 	createData.TimeTable = timeTable
-
-	// check teacher timetable overlap
-	teacherTimeTable, err := biz.classStore.GetTeacherTimeTable(ctx, data.TeacherID)
-	if err != nil {
-		biz.logger.WithSrc().Errorln(err)
-		return nil, appCommon.ErrCannotGetEntity(classroommodel.EntityName, err)
-	}
-
-	if createData.TimeTable.CheckIntersect(&teacherTimeTable) {
-		return nil, classroommodel.ErrTeacherTimeTableOverlap
-	}
 
 	if err := biz.classStore.Create(ctx, createData); err != nil {
 		biz.logger.WithSrc().Errorln(err)

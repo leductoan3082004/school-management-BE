@@ -2,6 +2,7 @@ package lessonbiz
 
 import (
 	"SchoolManagement-BE/appCommon"
+	classroommodel "SchoolManagement-BE/modules/classroom/model"
 	lessonmodel "SchoolManagement-BE/modules/lesson/model"
 	usermodel "SchoolManagement-BE/modules/user/model"
 	"context"
@@ -11,16 +12,21 @@ import (
 type listLessonStore interface {
 	ListLesson(ctx context.Context, data *lessonmodel.LessonList, paging *appCommon.Paging) ([]lessonmodel.Lesson, error)
 }
-
-type listLessonBiz struct {
-	store  listLessonStore
-	logger logger.Logger
+type classLessonListStore interface {
+	FindById(ctx context.Context, id string) (*classroommodel.Classroom, error)
 }
 
-func NewListLessonBiz(store listLessonStore) *listLessonBiz {
+type listLessonBiz struct {
+	store      listLessonStore
+	classStore classLessonListStore
+	logger     logger.Logger
+}
+
+func NewListLessonBiz(store listLessonStore, classStore classLessonListStore) *listLessonBiz {
 	return &listLessonBiz{
-		store:  store,
-		logger: logger.GetCurrent().GetLogger("ListLessonBiz"),
+		store:      store,
+		classStore: classStore,
+		logger:     logger.GetCurrent().GetLogger("ListLessonBiz"),
 	}
 }
 
@@ -33,10 +39,17 @@ func (biz *listLessonBiz) ListLesson(
 	if user.Role != usermodel.RoleAdmin {
 		return []lessonmodel.Lesson{}, appCommon.ErrNoPermission(nil)
 	}
-	if err := data.Validate(); err != nil {
-		biz.logger.WithSrc().Errorln(err)
-		return nil, appCommon.ErrInvalidRequest(err)
+	if user.Role == usermodel.RoleTeacher {
+		class, err := biz.classStore.FindById(ctx, data.ClassID)
+		if err != nil {
+			biz.logger.WithSrc().Errorln(err)
+			return nil, appCommon.ErrCannotGetEntity(classroommodel.EntityName, err)
+		}
+		if class.TeacherID != user.Id {
+			return nil, appCommon.ErrNoPermission(nil)
+		}
 	}
+
 	if paging == nil {
 		paging = &appCommon.Paging{Page: 1, Limit: 10}
 	}

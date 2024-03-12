@@ -20,7 +20,6 @@ type TimeTables []TimeTable
 type Classroom struct {
 	appCommon.MgDBModel `json:",inline" bson:",inline"`
 	CourseID            primitive.ObjectID `json:"course_id" bson:"course_id"`
-	TeacherID           primitive.ObjectID `json:"teacher_id" bson:"teacher_id"`
 	TimeTable           TimeTables         `json:"time_table" bson:"time_table"`
 	Limit               int                `json:"limit" bson:"limit"`
 }
@@ -52,7 +51,6 @@ func (Classroom) TableName() string {
 
 type ClassroomCreate struct {
 	CourseID  string `json:"course_id" binding:"required"`
-	TeacherID string `json:"teacher_id" binding:"required"`
 	Weeks     int    `json:"weeks" binding:"required"`
 	Limit     int    `json:"limit" binding:"required"`
 	TimeTable []struct {
@@ -75,7 +73,6 @@ func (data *ClassroomCreate) Validate() error {
 
 type ClassroomUpdate struct {
 	ClassroomId string    `json:"classroom_id" binding:"required"`
-	TeacherID   *string   `json:"teacher_id"`
 	Limit       *int      `json:"limit"`
 	TimeIds     *[]string `json:"time_ids"`
 }
