@@ -4,6 +4,7 @@ import (
 	"SchoolManagement-BE/middleware"
 	classroomgin "SchoolManagement-BE/modules/classroom/transport/gin"
 	coursegin "SchoolManagement-BE/modules/course/transport/gin"
+	lessongin "SchoolManagement-BE/modules/lesson/transport/gin"
 	usergin "SchoolManagement-BE/modules/user/transport/gin"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
@@ -78,8 +79,13 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		)
 	}
 
-	material := v1.Group("/material")
+	lesson := v1.Group("/lesson")
 	{
-
+		lesson.POST(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			lessongin.Create(sc),
+		)
 	}
 }
