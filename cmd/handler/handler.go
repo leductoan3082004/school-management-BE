@@ -79,6 +79,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 				middleware.AdminAuthorization(),
 				classroomgin.AddMemberToClass(sc),
 			)
+			member.POST("/:class_id", classroomgin.StudentRegisterClass(sc))
 		}
 	}
 
