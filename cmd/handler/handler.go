@@ -71,6 +71,15 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.AdminAuthorization(),
 			classroomgin.Update(sc),
 		)
+
+		member := classroom.Group("/member")
+		{
+			member.POST(
+				"/",
+				middleware.AdminAuthorization(),
+				classroomgin.AddMemberToClass(sc),
+			)
+		}
 	}
 
 	lesson := authedRoutes.Group("/lesson")
