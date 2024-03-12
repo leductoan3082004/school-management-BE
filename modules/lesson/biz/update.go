@@ -34,14 +34,6 @@ func NewUpdateLessonBiz(
 }
 
 func (biz *updateLessonBiz) UpdateLesson(ctx context.Context, data *lessonmodel.LessonUpdate) error {
-	_, err := biz.classStore.FindById(ctx, data.ClassID)
-	if err != nil {
-		if err == appCommon.ErrRecordNotFound {
-			return appCommon.ErrEntityNotFound(classroommodel.EntityName, err)
-		}
-		biz.logger.WithSrc().Errorln(err)
-		return appCommon.ErrCannotGetEntity(classroommodel.EntityName, err)
-	}
 
 	if err := biz.store.Update(ctx, data); err != nil {
 		biz.logger.WithSrc().Errorln(err)

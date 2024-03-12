@@ -13,7 +13,6 @@ import (
 type classroomCreateStore interface {
 	Create(ctx context.Context, data *classroommodel.Classroom) error
 	Count(ctx context.Context, courseID string) (int64, error)
-	GetTeacherTimeTable(ctx context.Context, teacherID string) (classroommodel.TimeTables, error)
 }
 type courseCheckingStore interface {
 	FindById(ctx context.Context, id string) (*coursemodel.Course, error)

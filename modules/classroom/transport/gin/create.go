@@ -6,7 +6,6 @@ import (
 	classroommodel "SchoolManagement-BE/modules/classroom/model"
 	classroomstorage "SchoolManagement-BE/modules/classroom/storage"
 	coursestorage "SchoolManagement-BE/modules/course/storage"
-	userstorage "SchoolManagement-BE/modules/user/storage"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,9 +21,8 @@ func Create(sc goservice.ServiceContext) gin.HandlerFunc {
 		db := sc.MustGet(appCommon.DBMain).(*mongo.Client)
 
 		classStore := classroomstorage.NewMgDBStorage(db)
-		userStore := userstorage.NewMgDBStorage(db)
 		courseStore := coursestorage.NewMgDBStorage(db)
-		biz := classroombiz.NewCreateClassroomBiz(classStore, courseStore, userStore)
+		biz := classroombiz.NewCreateClassroomBiz(classStore, courseStore)
 		res, err := biz.CreateClassroom(c.Request.Context(), &data)
 		if err != nil {
 			panic(err)

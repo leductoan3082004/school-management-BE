@@ -5,7 +5,6 @@ import (
 	classroombiz "SchoolManagement-BE/modules/classroom/biz"
 	classroommodel "SchoolManagement-BE/modules/classroom/model"
 	classroomstorage "SchoolManagement-BE/modules/classroom/storage"
-	userstorage "SchoolManagement-BE/modules/user/storage"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,8 +20,7 @@ func Update(sc goservice.ServiceContext) gin.HandlerFunc {
 		db := sc.MustGet(appCommon.DBMain).(*mongo.Client)
 
 		classStore := classroomstorage.NewMgDBStorage(db)
-		userStore := userstorage.NewMgDBStorage(db)
-		biz := classroombiz.NewClassUpdateBiz(classStore, userStore)
+		biz := classroombiz.NewClassUpdateBiz(classStore)
 		if err := biz.UpdateClass(c.Request.Context(), &data); err != nil {
 			panic(err)
 		}
