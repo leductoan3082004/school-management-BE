@@ -34,7 +34,6 @@ func NewUpdateLessonBiz(
 }
 
 func (biz *updateLessonBiz) UpdateLesson(ctx context.Context, data *lessonmodel.LessonUpdate) error {
-
 	if err := biz.store.Update(ctx, data); err != nil {
 		biz.logger.WithSrc().Errorln(err)
 		return appCommon.ErrCannotUpdateEntity(lessonmodel.EntityName, err)

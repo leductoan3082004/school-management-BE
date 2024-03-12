@@ -26,8 +26,8 @@ type LessonCreate struct {
 
 type LessonUpdate struct {
 	LessonID string  `json:"lesson_id" binding:"required"`
-	Name     *string `json:"name" binding:"required"`
-	Content  *string `json:"content" binding:"required"`
+	Name     *string `json:"name"`
+	Content  *string `json:"content"`
 }
 
 type LessonDelete struct {
