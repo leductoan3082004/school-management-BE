@@ -87,5 +87,11 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.AdminAuthorization(),
 			lessongin.Create(sc),
 		)
+		lesson.PUT(
+			"/",
+			middleware.RequiredAuth(sc),
+			middleware.AdminAuthorization(),
+			lessongin.Update(sc),
+		)
 	}
 }
