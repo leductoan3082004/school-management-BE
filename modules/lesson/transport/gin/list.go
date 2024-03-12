@@ -6,7 +6,6 @@ import (
 	lessonbiz "SchoolManagement-BE/modules/lesson/biz"
 	lessonmodel "SchoolManagement-BE/modules/lesson/model"
 	lessonstorage "SchoolManagement-BE/modules/lesson/storage"
-	usermodel "SchoolManagement-BE/modules/user/model"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,10 +27,9 @@ func List(sc goservice.ServiceContext) gin.HandlerFunc {
 
 		store := lessonstorage.NewMgDBStorage(db)
 		classStore := classroomstorage.NewMgDBStorage(db)
-		user := c.MustGet(appCommon.CurrentUser).(*usermodel.User)
-		biz := lessonbiz.NewListLessonBiz(store, classStore, nil)
+		biz := lessonbiz.NewListLessonBiz(store, classStore)
 
-		res, err := biz.ListLesson(c.Request.Context(), user, &data, &paging)
+		res, err := biz.ListLesson(c.Request.Context(), &data, &paging)
 		if err != nil {
 			panic(err)
 		}
