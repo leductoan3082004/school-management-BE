@@ -1,8 +1,8 @@
-package materialbiz
+package lessonbiz
 
 import (
 	"SchoolManagement-BE/appCommon"
-	materialmodel "SchoolManagement-BE/modules/material/model"
+	lessonmodel "SchoolManagement-BE/modules/lesson/model"
 	"context"
 	"fmt"
 	"github.com/lequocbinh04/go-sdk/logger"
@@ -14,7 +14,7 @@ import (
 )
 
 type materialUploadStore interface {
-	Create(ctx context.Context, data *materialmodel.Material) error
+	Upload(ctx context.Context, data *lessonmodel.Material) error
 }
 
 type materialUploadBiz struct {
@@ -34,8 +34,8 @@ func NewMaterialUploadBiz(store materialUploadStore, s3 aws.S3) *materialUploadB
 func (biz *materialUploadBiz) Upload(ctx context.Context, dataByte []byte, fileName, lessonID string) error {
 	fileExt := filepath.Ext(fileName) // "img.jpg" => ".jpg"
 
-	if !slices.Contains(materialmodel.AllowedExt, fileExt) {
-		return materialmodel.ErrMaterialInvalidFormat
+	if !slices.Contains(lessonmodel.AllowedExt, fileExt) {
+		return lessonmodel.ErrMaterialInvalidFormat
 	}
 
 	lessonId, err := primitive.ObjectIDFromHex(lessonID)
@@ -51,23 +51,25 @@ func (biz *materialUploadBiz) Upload(ctx context.Context, dataByte []byte, fileN
 		fileExt,
 	) // 9129324893248.jpg
 
-	key := appCommon.Join("/", appCommon.S3Path, fileExt)
+	key := appCommon.Join("/", appCommon.S3Path, fileName)
 	_, err = biz.s3.UploadFileData(ctx, dataByte, key)
+
+	fmt.Println(key)
 
 	if err != nil {
 		biz.logger.WithSrc().Errorln(err)
 		return appCommon.ErrInternal(err)
 	}
 
-	res := &materialmodel.Material{
+	res := &lessonmodel.Material{
 		Key:      key,
 		Name:     originName,
 		LessonID: lessonId,
 	}
 
-	if err := biz.store.Create(ctx, res); err != nil {
+	if err := biz.store.Upload(ctx, res); err != nil {
 		biz.logger.WithSrc().Errorln(err)
-		return appCommon.ErrCannotCreateEntity(materialmodel.EntityName, err)
+		return appCommon.ErrCannotUpdateEntity(lessonmodel.EntityName, err)
 	}
 	return nil
 }

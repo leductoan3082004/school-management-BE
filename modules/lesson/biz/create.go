@@ -34,8 +34,9 @@ func NewCreateLessonBiz(
 
 func (biz *createLessonBiz) CreateLesson(ctx context.Context, data *lessonmodel.LessonCreate) error {
 	lesson := lessonmodel.Lesson{
-		Name:    data.Name,
-		Content: data.Content,
+		Name:      data.Name,
+		Content:   data.Content,
+		Materials: []lessonmodel.Material{},
 	}
 
 	// Check class

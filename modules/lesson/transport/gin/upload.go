@@ -1,9 +1,9 @@
-package gin
+package lessongin
 
 import (
 	"SchoolManagement-BE/appCommon"
-	materialbiz "SchoolManagement-BE/modules/material/biz"
-	materialstorage "SchoolManagement-BE/modules/material/storage"
+	materialbiz "SchoolManagement-BE/modules/lesson/biz"
+	lessonstorage "SchoolManagement-BE/modules/lesson/storage"
 	"errors"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
@@ -14,7 +14,7 @@ import (
 
 func UploadByFile(sc goservice.ServiceContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		lessionID := c.Param("lesson_id")
+		lessonID := c.Param("lesson_id")
 		fileHeader, err := c.FormFile("file")
 		if err != nil {
 			panic(appCommon.ErrInvalidRequest(err))
@@ -38,10 +38,10 @@ func UploadByFile(sc goservice.ServiceContext) gin.HandlerFunc {
 		db := sc.MustGet(appCommon.DBMain).(*mongo.Client)
 		s3 := sc.MustGet(appCommon.PluginAWS).(aws.S3)
 
-		materialStore := materialstorage.NewMgDBStorage(db)
+		materialStore := lessonstorage.NewMgDBStorage(db)
 		materialBiz := materialbiz.NewMaterialUploadBiz(materialStore, s3)
 
-		if err := materialBiz.Upload(c.Request.Context(), dataBytes, fileHeader.Filename, lessionID); err != nil {
+		if err := materialBiz.Upload(c.Request.Context(), dataBytes, fileHeader.Filename, lessonID); err != nil {
 			panic(err)
 		}
 		c.JSON(http.StatusOK, appCommon.SimpleSuccessResponse("success"))

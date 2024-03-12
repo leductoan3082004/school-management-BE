@@ -77,19 +77,17 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 	{
 		lesson.POST(
 			"/",
-			middleware.AdminAuthorization(),
 			lessongin.Create(sc),
 		)
 		lesson.PUT(
 			"/",
-			middleware.AdminAuthorization(),
 			lessongin.Update(sc),
 		)
 		lesson.DELETE(
 			"/",
-			middleware.AdminAuthorization(),
 			lessongin.Delete(sc),
 		)
 		lesson.GET("/", lessongin.List(sc))
+		lesson.POST("/upload/:lesson_id", lessongin.UploadByFile(sc))
 	}
 }
