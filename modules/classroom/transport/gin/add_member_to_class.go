@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"net/http"
 )
 
@@ -23,9 +25,23 @@ func AddMemberToClass(sc goservice.ServiceContext) gin.HandlerFunc {
 		classStore := classroomstorage.NewMgDBStorage(db)
 		userStore := userstorage.NewMgDBStorage(db)
 		biz := classroombiz.NewAddMemberToClassBiz(classStore, userStore)
-		if err := biz.AddMemberToClass(c.Request.Context(), &data); err != nil {
+
+		wc := writeconcern.New(writeconcern.WMajority())
+		txnOptions := options.Transaction().SetWriteConcern(wc)
+
+		session, err := db.StartSession()
+		if err != nil {
 			panic(err)
 		}
+		defer session.EndSession(c.Request.Context())
+		_, err = session.WithTransaction(c.Request.Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+			return nil, biz.AddMemberToClass(ctx, &data)
+		}, txnOptions)
+
+		if err != nil {
+			panic(err)
+		}
+
 		c.JSON(http.StatusOK, appCommon.SimpleSuccessResponse("success"))
 	}
 }

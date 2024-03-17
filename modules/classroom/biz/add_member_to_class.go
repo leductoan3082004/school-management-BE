@@ -20,6 +20,7 @@ type addMemberToClassStore interface {
 		userID string,
 		role *int,
 	) (bool, error)
+	DecreaseLimit(ctx context.Context, classID string) error
 }
 type addMemberToClassUserStore interface {
 	FindById(ctx context.Context, id string) (*usermodel.User, error)
@@ -56,7 +57,7 @@ func (biz *addMemberToClassBiz) AddMemberToClass(
 		return appCommon.ErrCannotGetEntity(usermodel.EntityName, err)
 	}
 
-	isExist, err := biz.store.CheckMemberInClass(ctx, data.ClassroomID, data.UserID, &data.Role)
+	isExist, err := biz.store.CheckMemberInClass(ctx, data.ClassroomID, data.UserID, nil)
 	if err != nil {
 		biz.logger.WithSrc().Errorln(err)
 		return appCommon.ErrInternal(err)
@@ -72,6 +73,11 @@ func (biz *addMemberToClassBiz) AddMemberToClass(
 	}
 
 	if err := biz.store.AddMemberToClass(ctx, &member, data.ClassroomID); err != nil {
+		biz.logger.WithSrc().Errorln(err)
+		return appCommon.ErrCannotUpdateEntity(classroommodel.EntityName, err)
+	}
+
+	if err := biz.store.DecreaseLimit(ctx, data.ClassroomID); err != nil {
 		biz.logger.WithSrc().Errorln(err)
 		return appCommon.ErrCannotUpdateEntity(classroommodel.EntityName, err)
 	}

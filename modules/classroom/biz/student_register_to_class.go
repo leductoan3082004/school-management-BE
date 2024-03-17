@@ -17,6 +17,7 @@ type studentRegisterToClassStore interface {
 		userID string,
 		role *int,
 	) (bool, error)
+	DecreaseLimit(ctx context.Context, classID string) error
 }
 
 type studentRegisterToClassBiz struct {
@@ -59,5 +60,9 @@ func (biz *studentRegisterToClassBiz) AddMemberToClass(
 		return appCommon.ErrCannotUpdateEntity(classroommodel.EntityName, err)
 	}
 
+	if err := biz.store.DecreaseLimit(ctx, classID); err != nil {
+		biz.logger.WithSrc().Errorln(err)
+		return appCommon.ErrCannotUpdateEntity(classroommodel.EntityName, err)
+	}
 	return nil
 }
