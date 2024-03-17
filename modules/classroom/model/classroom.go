@@ -10,6 +10,17 @@ import (
 
 const EntityName = "Classroom"
 
+type MemberScore struct {
+	Attendance uint `json:"attendance" bson:"attendance" `
+	Lab        uint `json:"lab" bson:"lab" `
+	Midterm    uint `json:"midterm" bson:"midterm"`
+	Final      uint `json:"final" bson:"final"`
+}
+type Member struct {
+	UserID      primitive.ObjectID `json:"user_id" bson:"user_id"`
+	Role        int                `json:"role" bson:"role"`
+	MemberScore `bson:",inline"`
+}
 type TimeTable struct {
 	ID          primitive.ObjectID `json:"id" bson:"id"`
 	LessonStart time.Time          `json:"lesson_start" bson:"lesson_start"`
@@ -17,12 +28,13 @@ type TimeTable struct {
 }
 
 type TimeTables []TimeTable
+
 type Classroom struct {
 	appCommon.MgDBModel `json:",inline" bson:",inline"`
 	CourseID            primitive.ObjectID `json:"course_id" bson:"course_id"`
-	TeacherID           primitive.ObjectID `json:"teacher_id" bson:"teacher_id"`
 	TimeTable           TimeTables         `json:"time_table" bson:"time_table"`
 	Limit               int                `json:"limit" bson:"limit"`
+	Members             []Member           `json:"members" bson:"members"`
 }
 
 func (s *TimeTables) CheckIntersect(other *TimeTables) bool {
@@ -52,7 +64,6 @@ func (Classroom) TableName() string {
 
 type ClassroomCreate struct {
 	CourseID  string `json:"course_id" binding:"required"`
-	TeacherID string `json:"teacher_id" binding:"required"`
 	Weeks     int    `json:"weeks" binding:"required"`
 	Limit     int    `json:"limit" binding:"required"`
 	TimeTable []struct {
@@ -75,7 +86,6 @@ func (data *ClassroomCreate) Validate() error {
 
 type ClassroomUpdate struct {
 	ClassroomId string    `json:"classroom_id" binding:"required"`
-	TeacherID   *string   `json:"teacher_id"`
 	Limit       *int      `json:"limit"`
 	TimeIds     *[]string `json:"time_ids"`
 }
@@ -86,6 +96,16 @@ type ClassroomDelete struct {
 
 type ClassroomList struct {
 	CourseID string `form:"course_id" binding:"required"`
+}
+
+type ClassroomAddMember struct {
+	ClassroomID string `json:"classroom_id" binding:"required"`
+	UserID      string `json:"user_id" binding:"required"`
+	Role        int    `json:"role" binding:"required"`
+}
+
+type ClassroomMemberList struct {
+	ClassroomID string `form:"classroom_id" binding:"required"`
 }
 
 var (

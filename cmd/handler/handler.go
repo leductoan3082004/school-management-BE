@@ -4,6 +4,7 @@ import (
 	"SchoolManagement-BE/middleware"
 	classroomgin "SchoolManagement-BE/modules/classroom/transport/gin"
 	coursegin "SchoolManagement-BE/modules/course/transport/gin"
+	lessongin "SchoolManagement-BE/modules/lesson/transport/gin"
 	usergin "SchoolManagement-BE/modules/user/transport/gin"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
@@ -31,23 +32,20 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		user.GET("/", middleware.AdminAuthorization(), usergin.ListUsers(sc))
 	}
 
-	course := v1.Group("/course")
+	course := authedRoutes.Group("/course")
 	{
 		course.POST(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			coursegin.Create(sc),
 		)
 		course.DELETE(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			coursegin.Delete(sc),
 		)
 		course.PUT(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			coursegin.Update(sc),
 		)
@@ -55,26 +53,52 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		course.GET("/", coursegin.List(sc))
 	}
 
-	classroom := v1.Group("/classroom")
+	classroom := authedRoutes.Group("/classroom")
 	{
 		classroom.POST(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			classroomgin.Create(sc),
 		)
 		classroom.DELETE(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			classroomgin.Delete(sc),
 		)
 		classroom.GET("/", classroomgin.List(sc))
 		classroom.PUT(
 			"/",
-			middleware.RequiredAuth(sc),
 			middleware.AdminAuthorization(),
 			classroomgin.Update(sc),
 		)
+
+		member := classroom.Group("/member")
+		{
+			member.POST(
+				"/",
+				middleware.AdminAuthorization(),
+				classroomgin.AddMemberToClass(sc),
+			)
+			member.POST("/:class_id", classroomgin.StudentRegisterClass(sc))
+			member.GET("/", classroomgin.ListMemberInClass(sc))
+		}
+	}
+
+	lesson := authedRoutes.Group("/lesson")
+	{
+		lesson.POST(
+			"/",
+			lessongin.Create(sc),
+		)
+		lesson.PUT(
+			"/",
+			lessongin.Update(sc),
+		)
+		lesson.DELETE(
+			"/",
+			lessongin.Delete(sc),
+		)
+		lesson.GET("/", lessongin.List(sc))
+		lesson.POST("/upload/:lesson_id", lessongin.UploadByFile(sc))
 	}
 }

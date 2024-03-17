@@ -23,13 +23,6 @@ func (s *MgDBStorage) UpdateClass(ctx context.Context, data *classroommodel.Clas
 		"_id": classId,
 	}
 	updateData := bson.M{}
-	if data.TeacherID != nil {
-		teacherId, err := primitive.ObjectIDFromHex(*data.TeacherID)
-		if err != nil {
-			return appCommon.ErrInvalidRequest(err)
-		}
-		updateData["teacher_id"] = teacherId
-	}
 	if data.Limit != nil {
 		updateData["limit"] = *data.Limit
 	}
