@@ -104,6 +104,10 @@ type ClassroomAddMember struct {
 	Role        int    `json:"role" binding:"required"`
 }
 
+type ClassroomMemberList struct {
+	ClassroomID string `form:"classroom_id" binding:"required"`
+}
+
 var (
 	ErrTeacherTimeTableOverlap = appCommon.NewCustomError(
 		http.StatusBadRequest,

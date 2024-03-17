@@ -80,6 +80,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 				classroomgin.AddMemberToClass(sc),
 			)
 			member.POST("/:class_id", classroomgin.StudentRegisterClass(sc))
+			member.GET("/", classroomgin.ListMemberInClass(sc))
 		}
 	}
 
