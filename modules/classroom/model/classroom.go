@@ -108,6 +108,31 @@ type ClassroomMemberList struct {
 	ClassroomID string `form:"classroom_id" binding:"required"`
 }
 
+type ClassroomStudentScoreUpdate struct {
+	ClassroomID string `json:"classroom_id" binding:"required"`
+	UserID      string `json:"user_id" binding:"required"`
+	Attendance  *uint  `json:"attendance"`
+	Lab         *uint  `json:"lab"`
+	Midterm     *uint  `json:"midterm"`
+	Final       *uint  `json:"final"`
+}
+
+func (s *ClassroomStudentScoreUpdate) Validate() error {
+	if s.Attendance != nil && *s.Attendance > 100 {
+		return appCommon.ErrInvalidRequest(errors.New("attendance must be less than 100"))
+	}
+	if s.Lab != nil && *s.Lab > 100 {
+		return appCommon.ErrInvalidRequest(errors.New("lab must be less than 100"))
+	}
+	if s.Midterm != nil && *s.Midterm > 100 {
+		return appCommon.ErrInvalidRequest(errors.New("midterm must be less than 100"))
+	}
+	if s.Final != nil && *s.Final > 100 {
+		return appCommon.ErrInvalidRequest(errors.New("final must be less than 100"))
+	}
+	return nil
+}
+
 var (
 	ErrTeacherTimeTableOverlap = appCommon.NewCustomError(
 		http.StatusBadRequest,

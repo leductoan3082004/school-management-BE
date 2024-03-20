@@ -81,6 +81,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			)
 			member.POST("/:class_id", classroomgin.StudentRegisterClass(sc))
 			member.GET("/", classroomgin.ListMemberInClass(sc))
+			member.POST("/score", classroomgin.UpdateStudentScore(sc))
 		}
 	}
 
