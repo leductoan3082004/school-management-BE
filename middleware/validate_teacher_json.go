@@ -36,11 +36,10 @@ func TeacherValidationJSON(sc goservice.ServiceContext) gin.HandlerFunc {
 		teacher := usermodel.RoleTeacher
 		ok, err := biz.CheckUserInClass(
 			c.Request.Context(),
-			user.Id.Hex(),
 			data.ClassroomID,
+			user.Id.Hex(),
 			&teacher,
 		)
-
 		if err != nil {
 			panic(err)
 		}

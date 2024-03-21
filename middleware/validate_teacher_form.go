@@ -7,7 +7,6 @@ import (
 	usermodel "SchoolManagement-BE/modules/user/model"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -15,7 +14,7 @@ import (
 func TeacherValidationForm(sc goservice.ServiceContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data teacherValidation
-		if err := c.ShouldBindBodyWith(&data, binding.JSON); err != nil {
+		if err := c.ShouldBind(&data); err != nil {
 			panic(appCommon.ErrInvalidRequest(err))
 		}
 		user := c.MustGet(appCommon.CurrentUser).(*usermodel.User)
@@ -32,8 +31,8 @@ func TeacherValidationForm(sc goservice.ServiceContext) gin.HandlerFunc {
 		teacher := usermodel.RoleTeacher
 		ok, err := biz.CheckUserInClass(
 			c.Request.Context(),
-			user.Id.Hex(),
 			data.ClassroomID,
+			user.Id.Hex(),
 			&teacher,
 		)
 
