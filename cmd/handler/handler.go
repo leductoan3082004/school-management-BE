@@ -117,5 +117,6 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			middleware.TeacherUploadMaterialValidation(sc),
 			lessongin.UploadByFile(sc),
 		)
+		lesson.GET("/material/*key", middleware.ValidateGetMaterial(sc))
 	}
 }
