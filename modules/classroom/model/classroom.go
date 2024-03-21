@@ -34,7 +34,7 @@ type Classroom struct {
 	CourseID            primitive.ObjectID `json:"course_id" bson:"course_id"`
 	TimeTable           TimeTables         `json:"time_table" bson:"time_table"`
 	Limit               int                `json:"limit" bson:"limit"`
-	Members             []Member           `json:"members" bson:"members"`
+	Members             []Member           `json:"members,omitempty" bson:"members"`
 }
 
 func (s *TimeTables) CheckIntersect(other *TimeTables) bool {

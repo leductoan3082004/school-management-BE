@@ -30,6 +30,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		user.POST("/", middleware.AdminAuthorization(), usergin.Create(sc))
 		user.POST("/change-password", usergin.ChangePassword(sc))
 		user.GET("/", middleware.AdminAuthorization(), usergin.ListUsers(sc))
+		user.GET("/class", usergin.ListJoinedClass(sc))
 	}
 
 	course := authedRoutes.Group("/course")
