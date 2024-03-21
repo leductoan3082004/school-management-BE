@@ -3,11 +3,11 @@ package cmd
 import (
 	"SchoolManagement-BE/appCommon"
 	"SchoolManagement-BE/cmd/handler"
+	"SchoolManagement-BE/component/aws"
 	"SchoolManagement-BE/plugin/appredis"
 	jwtProvider "SchoolManagement-BE/plugin/tokenprovider/jwt"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
-	"github.com/lequocbinh04/go-sdk/plugin/aws"
 	"github.com/lequocbinh04/go-sdk/plugin/storage/sdkmgo"
 	"github.com/spf13/cobra"
 )

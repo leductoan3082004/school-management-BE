@@ -16,7 +16,8 @@ const (
 )
 
 const (
-	CurrentUser = "user"
+	CurrentUser       = "user"
+	CurrentLessonName = "lesson_name"
 )
 
 var (

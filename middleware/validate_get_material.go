@@ -51,6 +51,12 @@ func ValidateGetMaterial(sc goservice.ServiceContext) gin.HandlerFunc {
 			panic(appCommon.ErrNoPermission(errors.New("You are not a teacher in this classroom")))
 		}
 
+		for _, item := range lesson.Materials {
+			if item.Key == key {
+				c.Set(appCommon.CurrentLessonName, item.Name)
+				break
+			}
+		}
 		c.Next()
 	}
 }
