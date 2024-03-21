@@ -44,7 +44,7 @@ func (Material) TableName() string {
 
 type Lesson struct {
 	appCommon.MgDBModel `bson:",inline"`
-	ClassID             primitive.ObjectID `json:"class_id" bson:"class_id"`
+	ClassroomID         primitive.ObjectID `json:"classroom_id" bson:"classroom_id"`
 	Name                string             `json:"name" bson:"name"`
 	Content             string             `json:"content" bson:"content"`
 	Materials           []Material         `json:"materials" bson:"materials"`
@@ -55,9 +55,9 @@ func (Lesson) TableName() string {
 }
 
 type LessonCreate struct {
-	ClassID string `json:"class_id" binding:"required"`
-	Name    string `json:"name" binding:"required"`
-	Content string `json:"content" binding:"required"`
+	ClassroomID string `json:"classroom_id" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Content     string `json:"content" binding:"required"`
 }
 
 type LessonUpdate struct {
@@ -71,8 +71,8 @@ type LessonDelete struct {
 }
 
 type LessonList struct {
-	ClassID string  `json:"class_id" form:"class_id"`
-	Query   *string `json:"query" form:"query"`
+	ClassroomID string  `json:"classroom_id" form:"classroom_id"`
+	Query       *string `json:"query" form:"query"`
 }
 
 var (

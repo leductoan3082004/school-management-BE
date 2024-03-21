@@ -7,6 +7,7 @@ import (
 	lessonmodel "SchoolManagement-BE/modules/lesson/model"
 	lessonstorage "SchoolManagement-BE/modules/lesson/storage"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
@@ -15,7 +16,7 @@ import (
 func Update(sc goservice.ServiceContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data lessonmodel.LessonUpdate
-		if err := c.ShouldBind(&data); err != nil {
+		if err := c.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 			panic(appCommon.ErrInvalidRequest(err))
 		}
 		db := sc.MustGet(appCommon.DBMain).(*mongo.Client)

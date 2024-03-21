@@ -40,8 +40,8 @@ func (biz *createLessonBiz) CreateLesson(ctx context.Context, data *lessonmodel.
 	}
 
 	// Check class
-	class, err := biz.classStore.FindById(ctx, data.ClassID)
-	lesson.ClassID = class.Id
+	class, err := biz.classStore.FindById(ctx, data.ClassroomID)
+	lesson.ClassroomID = class.Id
 	if err != nil {
 		if err == appCommon.ErrRecordNotFound {
 			return appCommon.ErrEntityNotFound(classroommodel.EntityName, err)

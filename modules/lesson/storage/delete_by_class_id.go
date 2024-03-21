@@ -22,7 +22,7 @@ func (s *MgDBStorage) DeleteLessonByClassID(ctx context.Context, classID []strin
 	}
 
 	_, err := db.DeleteMany(ctx, bson.M{
-		"class_id": bson.M{"$in": objIds},
+		"classroom_id": bson.M{"$in": objIds},
 	})
 	if err != nil {
 		return appCommon.ErrDB(err)

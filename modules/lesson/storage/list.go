@@ -43,11 +43,11 @@ func (s *MgDBStorage) ListLesson(
 			"$search": *data.Query,
 		}
 	}
-	classID, err := primitive.ObjectIDFromHex(data.ClassID)
+	classID, err := primitive.ObjectIDFromHex(data.ClassroomID)
 	if err != nil {
 		return []lessonmodel.Lesson{}, appCommon.ErrInvalidRequest(err)
 	}
-	condition["class_id"] = classID
+	condition["classroom_id"] = classID
 
 	opts.SetLimit(int64(paging.Limit)).SetSort(bson.D{{"_id", -1}})
 
