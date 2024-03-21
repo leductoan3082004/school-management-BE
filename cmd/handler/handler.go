@@ -114,7 +114,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		lesson.GET("/", lessongin.List(sc))
 		lesson.POST(
 			"/upload/:lesson_id",
-			middleware.TeacherValidationJSON(sc),
+			middleware.TeacherUploadMaterialValidation(sc),
 			lessongin.UploadByFile(sc),
 		)
 	}
