@@ -81,8 +81,16 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 				classroomgin.AddMemberToClass(sc),
 			)
 			member.POST("/:class_id", classroomgin.StudentRegisterClass(sc))
-			member.GET("/", classroomgin.ListMemberInClass(sc))
-			member.POST("/score", classroomgin.UpdateStudentScore(sc))
+			member.GET(
+				"/",
+				middleware.TeacherValidationForm(sc),
+				classroomgin.ListMemberInClass(sc),
+			)
+			member.POST(
+				"/score",
+				middleware.TeacherValidationJSON(sc),
+				classroomgin.UpdateStudentScore(sc),
+			)
 		}
 	}
 
