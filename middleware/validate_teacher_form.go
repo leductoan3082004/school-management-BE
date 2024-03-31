@@ -6,6 +6,7 @@ import (
 	classroomstorage "SchoolManagement-BE/modules/classroom/storage"
 	usermodel "SchoolManagement-BE/modules/user/model"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	goservice "github.com/lequocbinh04/go-sdk"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,6 +28,8 @@ func TeacherValidationForm(sc goservice.ServiceContext) gin.HandlerFunc {
 		db := sc.MustGet(appCommon.DBMain).(*mongo.Client)
 		store := classroomstorage.NewMgDBStorage(db)
 		biz := classroombiz.NewCheckUserInClassBiz(store)
+
+		fmt.Println("data.ClassroomID: ", data.ClassroomID)
 
 		teacher := usermodel.RoleTeacher
 		ok, err := biz.CheckUserInClass(

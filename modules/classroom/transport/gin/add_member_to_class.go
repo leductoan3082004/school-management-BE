@@ -30,6 +30,7 @@ func AddMemberToClass(sc goservice.ServiceContext) gin.HandlerFunc {
 		txnOptions := options.Transaction().SetWriteConcern(wc)
 
 		session, err := db.StartSession()
+
 		if err != nil {
 			panic(err)
 		}

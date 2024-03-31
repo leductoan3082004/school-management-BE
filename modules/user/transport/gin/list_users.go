@@ -29,6 +29,6 @@ func ListUsers(sc goservice.ServiceContext) gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
-		c.JSON(http.StatusOK, appCommon.SimpleSuccessResponse(res))
+		c.JSON(http.StatusOK, appCommon.NewSuccessResponse(res, paging, nil))
 	}
 }
