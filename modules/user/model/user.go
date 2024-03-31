@@ -58,6 +58,9 @@ type UserChangePassword struct {
 type UserList struct {
 	Role *int `form:"role"`
 }
+type UserClassList struct {
+	UserId string `form:"user_id" binding:"required"`
+}
 
 var (
 	ErrUsernameExisted = appCommon.NewCustomError(
