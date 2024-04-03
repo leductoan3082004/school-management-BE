@@ -53,6 +53,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 		)
 
 		course.GET("/", coursegin.List(sc))
+		course.GET("/:course_id", coursegin.Find(sc))
 	}
 
 	classroom := authedRoutes.Group("/classroom")
