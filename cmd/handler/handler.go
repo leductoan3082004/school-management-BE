@@ -93,6 +93,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 				middleware.TeacherValidationJSON(sc),
 				classroomgin.UpdateStudentScore(sc),
 			)
+			member.DELETE("/", classroomgin.RemoveMemberInClass(sc))
 		}
 	}
 

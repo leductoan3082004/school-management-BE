@@ -117,6 +117,11 @@ type ClassroomStudentScoreUpdate struct {
 	Final       *uint  `json:"final"`
 }
 
+type ClassroomRemoveMember struct {
+	ClassroomID string `json:"classroom_id" binding:"required"`
+	UserID      string `json:"-"`
+}
+
 func (s *ClassroomStudentScoreUpdate) Validate() error {
 	if s.Attendance != nil && *s.Attendance > 100 {
 		return appCommon.ErrInvalidRequest(errors.New("attendance must be less than 100"))
